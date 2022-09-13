@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %} {% load crispy_forms_tags %} {% endcomment %}
+
+{% block title %}
+Home
+{% endblock title %}
+
+
+{% block content %}
+
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Shop Detail</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="/">Home</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Shop Detail</p>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+
+    <!-- Shop Detail Start -->
+    <div class="container-fluid py-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-5 pb-5">
+                <div id="product-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner border">
+
+                        {% for image in product.images %}
+                        <div class="carousel-item {% if forloop.first %} active {% endif %}">
+                            <img class="w-100 h-100" src="{{image.image.url}}" alt="Image">
+                        </div>
+                        {% endfor %}
+
+                    </div>
+                    <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+                        <i class="fa fa-2x fa-angle-left text-dark"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+                        <i class="fa fa-2x fa-angle-right text-dark"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-7 pb-5">
+                <h3 class="font-weight-semi-bold">{{product.name}}</h3>
+                <div class="d-flex mb-3">
+
+
+
+                    <div class="text-primary mr-2">
+                        {% for i in star_range %}
+                        <small class="fas fa-star"></small>
+                        {% endfor %}
+                        
+                        {% if product_rate_float_part > 0 %}
+                        <small class="fas fa-star-half-alt"></small>
+                        {% for i in empty_star_range_if_there_is_half_star %}
+                        <small class="far fa-star"></small>
+                        {% endfor %}
+                            {% else %}
+                            {% for i in empty_star_range_if_no_half_star %}
+                            <small class="far fa-star"></small>
+                            {% endfor %}
+                            {% endif %}
+                    </div>
+
+
+
+                    <small class="pt-1">({{product.get_number_of_ratings}} Reviews)</small>
+                </div>
+                
+                
+                {% if product.discountstatus == True %}
+
+                    {% if product.priceafterproductdiscount != product.price %}
+                        <h6>${{product.priceafterproductdiscount}}</h6>
+                        
+                    {% elif product.priceaftercategorydiscount != product.price and product.priceafterproductdiscount == product.price %}
+                        <h6>${{product.priceaftercategorydiscount}}</h6>
+                    
+                    {% else %}
+                    <h6>${{product.price}}</h6>
+                    {% endif %}
+            
+                {% endif %}
+                <p class="mb-4"> {{product.description|truncatechars:200}}</p>
+
+
+
+
+                <form method='post' action="{% url 'products:addtocard' product.id %}">
+                {% csrf_token %}
+                <div class="d-flex mb-3">
+                    <p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
+                    {% for size in product.get_product_sizes %}
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="size-{{size}}" name="size" value="{{size}}">
+                            <label class="custom-control-label" for="size-{{size}}">{{size}}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="d-flex mb-4">
+                    <p class="text-dark font-weight-medium mb-0 mr-3">Colors:</p>
+                    {% for color in product.get_product_colors %}
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="color-{{color}}" name="color" value="{{color}}">
+                            <label class="custom-control-label" for="color-{{color}}">{{color}}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="d-flex align-items-center mb-4 pt-2">
+                    <div class="input-group quantity mr-3" style="width: 130px;">
+                        <div class="input-group-btn">
+                            <a class="btn btn-primary btn-minus" id="btn-minus">
+                            <i class="fa fa-minus"></i>
+                            </a>
+                        </div>
+                        <input type="text" id="quantity" name="quantity" class="form-control bg-secondary text-center" value="1">
+                        <div class="input-group-btn">
+                            <a class="btn btn-primary btn-plus" id="btn-plus">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary px-3" {% if request.user.username == "" %}disabled{% endif %}><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
+                </div>
+            </form>
+
+                <!--social share -->
+                <div class="d-flex pt-2">
+                    {% comment %} <p class="text-dark font-weight-medium mb-0 mr-2">Share on:</p> {% endcomment %}
+                    <div class="shareon">
+                        <a class="facebook" data-url="http://localhost:8000{{request.path}}"></a> 
+                        <a class="linkedin"></a>
+                        <a class="mastodon"></a>
+                        <a class="messenger" data-fb-app-id="FACEBOOK APP IDD"></a>
+                        <a class="odnoklassniki"></a>
+                        <a class="pinterest"></a>
+                        <a class="pocket"></a>
+                        <button class="reddit"></button>
+                        <button class="telegram"></button>
+                        <button class="twitter"></button>
+                        <button class="viber"></button>
+                        <button class="vkontakte"></button>
+                        <button class="whatsapp"></button>
+                    </div>
+                </div>
+                <!--end social share -->
+
+            </div>
+        </div>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="nav nav-tabs justify-content-center border-secondary mb-4">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#tab-pane-1">Description</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Reviews ({{product.get_number_of_ratings}})</a>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab-pane-1">
+                        <h4 class="mb-3">Product Description</h4>
+                        <p>{{product.description}}</p>
+                    </div>
+                    <div class="tab-pane fade" id="tab-pane-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="mb-4">{{product.get_number_of_ratings}} reviews for "{{product.name}}"</h4>
+                                {% for rating in ratings %}
+                                <div class="media mb-4">
+                                    <img src="{{rating.user.useradditionalinfo.image.url}}" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                    <div class="media-body">
+                                        <h6>{{rating.user.username}}<small> - <i>{{rating.date_added}}</i></small></h6>
+                                        <div class="text-primary mb-2">
+                                            {% for star in rating.star_ranges.0 %}
+                                            <i class="fas fa-star"></i>
+                                            {% endfor %}
+                                            {% for emptystar in rating.star_ranges.1 %}
+                                            <i class="far fa-star"></i>
+                                            {% endfor %}
+                                        </div>
+                                        <p>{{rating.review}}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+
+                    <!--paginator for reviews -->
+
+                    <div class="col-12 pb-1">
+                        <nav aria-label="Page navigation">
+                          <ul class="pagination justify-content-center mb-3">
+                            {% if ratings.has_previous %}
+                            <li class="page-item">
+                              <a class="page-link" href="{{request.get_full_path}}{% if '=' in request.get_full_path %}&{% else %}?{% endif %}page={{ ratings.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">Previous</span>
+                              </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                            </li>
+                            {% endif %}
+                            {% for i in paginator.page_range %}
+                            {% if ratings.number == i%}
+                            <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="{{request.get_full_path}}{% if '=' in request.get_full_path %}&{% else %}?{% endif %}page={{i}}">{{i}}</a></li>
+                            {% endif %}
+                            {% endfor %}
+                            {% if ratings.has_next %}
+                            <li class="page-item">
+                              <a class="page-link" href="{{request.get_full_path}}{% if '=' in request.get_full_path %}&{% else %}?{% endif %}page={{ ratings.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                              </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                
+                              </li>
+                            {% endif %}
+                          </ul>
+                        </nav>
+                    </div>
+                    <!-- end paginator for reviews -->
+
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="mb-4">Leave a review</h4>
+                                
+                                <form method='post' action="{% url 'products:review' product.id %}">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="message">Your Review *</label>
+                                        <textarea id="message" name="review" cols="30" rows="5" class="form-control"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="d-flex my-3">
+                                            <p class="mb-0 mr-2">Your Rating * :</p>
+                                            <div class="text-primary">
+                                                <input name="star1" type="checkbox">
+                                                <input name="star2" type="checkbox">
+                                                <input name="star3" type="checkbox">
+                                                <input name="star4" type="checkbox">
+                                                <input name="star5" type="checkbox">
+                                            
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <input type="submit" value="Leave Your Review" class="btn btn-primary px-3" {% if request.user.username == "" %}disabled{% endif %}>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Shop Detail End -->
+
+<script>
+    let btn_minus = document.getElementById("btn-minus");
+    let btn_plus = document.getElementById("btn-plus");
+    let val = parseInt(document.getElementById("quantity").value);
+    btn_plus.onclick = function () {
+        val=val+1;
+        document.getElementById("quantity").value=val;
+        console.log('plus');
+    };
+    btn_minus.onclick = function () {
+        val=val-1;
+        if (val < 1) {
+            val = 1;
+            document.getElementById("quantity").value=1;
+        }else{
+            document.getElementById("quantity").value=val;
+        }
+    };
+</script>
+
+    {% endblock content %}
+

@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        {% block title %}
+        {% comment %} <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>     {% endcomment %}
+        {% endblock title %}
+    </title>
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <!-- Libraries Stylesheet -->
+    <link href="/static/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    <script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v9.0"
+    nonce="8E6OZDVx"></script>
+<!-- social share CDN -->
+    <link
+    href="https://cdn.jsdelivr.net/npm/shareon@2/dist/shareon.min.css"
+    rel="stylesheet"/>
+    <script
+      src="https://cdn.jsdelivr.net/npm/shareon@2/dist/shareon.iife.js"
+      defer
+      init>
+    </script>
+<!-- end social share CDN -->
+  </head>
+  <body>
+
+    {% include "nav.html" %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"> </script>
+
+    {% if messages %}
+        {% for message in messages %}
+
+
+        {% if message.tags == 'info' %}
+        <script>
+          swal("done!", "{{message}}!", "success");
+        </script>
+        {% endif %}
+        {% if message.tags == 'error' %}
+        <script>
+          swal("Error!", "{{message}}!", "error");
+        </script>
+        {% endif %}
+        {% endfor %}
+    {% endif %}
+
+      <!-- Logout Modal -->
+  <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Logout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        are you sure you need to logout ?
+        </div>
+        <div class="modal-footer">
+        <a class="btn btn-dark btn-sm" data-bs-dismiss="modal">Cancel</a>
+        {% comment %} <a href="{% url 'accounts:logout' %}" class="btn btn-dark ">Logout</a> {% endcomment %}
+        </div>
+    </div>
+    </div>
+</div>
+<!-- End Logout Modal -->
+
+
+
+
+{% block content %}
+
+{% endblock content %}
+
+
+
+{% include "footer.html" %}
+
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script href="{% static 'lib/easing/easing.min.js' %}"></script>
+    <script href="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+
+    <!-- Contact Javascript File -->
+    <script href="{% static 'mail/jqBootstrapValidation.min.js' %}"></script>
+    <script href="{% static 'mail/contact.js' %}"></script>
+
+    <!-- Template Javascript -->
+    <script href="{% static 'js/script.js' %}"></script>
+    
+  </body>
+</html>

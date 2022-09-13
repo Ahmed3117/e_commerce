@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %} {% load crispy_forms_tags %} {% endcomment %}
+
+{% block title %}
+Home
+{% endblock title %}
+
+
+{% block content %}
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Checkout</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="/">Home</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Checkout</p>
+            </div>
+            {% if pill == None %}
+            <div class="d-inline-flex">
+                <p class="m-0">You have no pill</p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0"><a href="{% url 'products:shop' %}">shop now</a></p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+    {% if pill != None %}
+    <!-- Checkout Start -->
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-8">
+                <div class="mb-4">
+                    <h4 class="font-weight-semi-bold mb-4">Billing Address</h4>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label>First Name</label>
+                            <input class="form-control" type="text" placeholder="John">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>Last Name</label>
+                            <input class="form-control" type="text" placeholder="Doe">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>E-mail</label>
+                            <input class="form-control" type="text" placeholder="example@email.com">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>Mobile No</label>
+                            <input class="form-control" type="text" placeholder="+123 456 789">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>Address Line 1</label>
+                            <input class="form-control" type="text" placeholder="123 Street">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>Address Line 2</label>
+                            <input class="form-control" type="text" placeholder="123 Street">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>Country</label>
+                            <select class="custom-select">
+                                <option selected>United States</option>
+                                <option>Afghanistan</option>
+                                <option>Albania</option>
+                                <option>Algeria</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>City</label>
+                            <input class="form-control" type="text" placeholder="New York">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>State</label>
+                            <input class="form-control" type="text" placeholder="New York">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>ZIP Code</label>
+                            <input class="form-control" type="text" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <form class="mb-5" action="">
+                    <div class="input-group">
+                        <input type="text" name="coupon" class="form-control p-4" placeholder="Coupon Code">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary">Apply Coupon</button>
+                        </div>
+                    </div>
+                </form>
+                {% if "coupon" in request.get_full_path %}
+                {% if coupon == None %}
+                <div class="alert alert-danger" role="alert">
+                    not valid coupon !
+                </div>
+                {% endif %}
+                {% if coupon_status == "active" %}
+                <div class="alert alert-danger" role="alert">
+                    you already aplied coupon !
+                </div>
+                {% endif %}
+                {% endif %}
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Order Total</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="font-weight-medium mb-3">Products</h5>
+
+                        {% for cartitem in pill.cartitem.all %}
+                            <div class="d-flex justify-content-between">
+                                <p>{{cartitem.product.name}} {{cartitem.quantity}}</p>
+                                <p>${{cartitem.get_cart_item_price}}</p>
+                            </div>
+                        {% endfor %} 
+                        <hr class="mt-0">
+                        <div class="d-flex justify-content-between mb-3 pt-1">
+                            <h6 class="font-weight-medium">Subtotal</h6>
+                            <h6 class="font-weight-medium">${{pill.get_pill_price.0}}</h6>
+                        </div>
+                        {% if pill.pill_discount != 0 %}
+                        <div class="d-flex justify-content-between mb-3 pt-1">
+                            <h6 class="font-weight-medium">Discount</h6>
+                            <h6 class="font-weight-medium">${{pill.pill_discount}}</h6>
+                        </div>
+                        {% endif %}
+                        {% if pill.pill_coupon_discount != 0 %}
+                        <div class="d-flex justify-content-between mb-3 pt-1">
+                            <h6 class="font-weight-medium">Coupon</h6>
+                            <h6 class="font-weight-medium">%{{pill.pill_coupon_discount}}</h6>
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Shipping</h6>
+                            <h6 class="font-weight-medium">${{shipping}}</h6>
+                        </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5 class="font-weight-bold">Total</h5>
+                            <h5 class="font-weight-bold">${{pill.get_pill_price.3}}</h5>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <script src="https://www.paypal.com/sdk/js?client-id=AW-zyA6aI_dwtHWc6v_cU-guoLMsZCW4W_IKTChAfD8vYSibIszie05pKMhOvvexmD2JeYxSyk99fCu1&currency=USD"></script>
+                <!-- Set up a container element for the button -->
+                <div id="paypal-button-container"></div>
+                <script>
+
+                    var pill_id = '{{pill.id}}'
+                    // ajax csrftoken generator
+                    function getCookie(name) {
+                        let cookieValue = null;
+                        if (document.cookie && document.cookie !== '') {
+                            const cookies = document.cookie.split(';');
+                            for (let i = 0; i < cookies.length; i++) {
+                                const cookie = cookies[i].trim();
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    const csrftoken = getCookie('csrftoken');
+                    // end ajax csrftoken generator
+
+                    // function to do something in django views after pay process succeed
+                    function pill_paid(){
+                        var url = "{% url 'products:pillpaid' %}"
+                        
+                        fetch (url , {
+                            method:"POST",
+                            headers:{
+                                'Content-type':'application/json' ,
+                                'X-CSRFToken': csrftoken,
+                            },
+                            body:JSON.stringify({'pill_id':pill_id})
+                        })
+                    }
+                    // end function to do something in django views after pay process succeed
+
+
+
+                  paypal.Buttons({
+                    // Sets up the transaction when a payment button is clicked
+                    createOrder: (data, actions) => {
+                      return actions.order.create({
+                        purchase_units: [{
+                          amount: {
+                            value: '{{pill.get_pill_price.3}}' // Can also reference a variable or function
+                          }
+                        }]
+                      });
+                    },
+                    // Finalize the transaction after payer approval
+                    onApprove: (data, actions) => {
+                      return actions.order.capture().then(function(orderData) {
+                        // Successful capture! For dev/demo purposes:
+                        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                        const transaction = orderData.purchase_units[0].payments.captures[0];
+                        pill_paid()
+                        alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                        // When ready to go live, remove the alert and show a success message within this page. For example:
+                        // const element = document.getElementById('paypal-button-container');
+                        // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                        // Or go to another URL:  actions.redirect('thank_you.html');
+                      });
+                    }
+                  }).render('#paypal-button-container');
+                </script>
+
+
+
+
+
+
+
+
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Payment</h4>
+                    </div>
+                    <div class="card-body" id="test">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" value="paypal" id="paypal">
+                                <label class="custom-control-label" for="paypal">Paypal or card</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" value="paypal" id="directcheck">
+                                <label class="custom-control-label" for="directcheck">Direct Check</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout End -->
+
+
+    {% endif %}
+
+
+
+
+<!-- show or hide paypal -->
+    <script>
+        const paypal_button = document.getElementById('paypal-button-container');
+        paypal_button.style.display = 'none';
+        
+        function hideme(){
+            paypal_button.style.display = 'none';
+        };
+        
+        function showme(){
+            paypal_button.style.display = 'block';
+        };
+        
+        function getOption() {
+            if(document.getElementById('paypal').checked) {
+                showme();
+            }else {
+                hideme();
+            }
+        }
+        
+        let paypal = document.getElementById('paypal');
+        let directcheck = document.getElementById('directcheck');
+        paypal.addEventListener("click", getOption);
+        directcheck.addEventListener("click", getOption);
+        
+    </script>
+        
+
+
+    
+        {% endblock content %}
